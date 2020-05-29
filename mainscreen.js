@@ -78,7 +78,7 @@ class MainScreen extends Phaser.Scene {
         this.language.on('pointerout', () => { this.language.setColor(color2); }).setInteractive({cursor: 'pointer'});
 
         //track
-        this.track1 = this.add.image(this.cameras.main.centerX-180, this.cameras.main.centerY+120, 'track');
+        this.track1 = this.add.image(this.cameras.main.centerX-180, this.cameras.main.centerY+120, 'track').setInteractive();
         this.track2 = this.add.image(this.cameras.main.centerX+183, this.cameras.main.centerY+120, 'track');
 
         // color track
@@ -93,8 +93,12 @@ class MainScreen extends Phaser.Scene {
         this.initial();
 
         // drag object
-		this.input.on('pointerdown', this.startDrag, this);
-
+        this.input.on('pointerdown', this.startDrag, this);
+        
+        // this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+        //     gameObject.x = dragX;
+        //     gameObject.y = dragY;
+        // });
     }
 
     initial() {
@@ -102,7 +106,7 @@ class MainScreen extends Phaser.Scene {
 			delay: 0,
 			callback: () => {
                 //header
-                this.header = this.add.text(284, 85, "Order the train cars from smaller to greater", { 
+                var header = this.add.text(313, 72, "Order the train cars from smaller to greater", { 
                     color: '#000000',
                     fontSize: '45px',
                     fontFamily: 'PT Sans'
@@ -113,8 +117,9 @@ class MainScreen extends Phaser.Scene {
 				// if checkFalse = true green ball can run to the left else green ball can't run to the left
 				this.checkFalse = true;
                 // track 
-                for (let i=0; i<5; ++i) {
-                    this.arrayColorTrack[i].setFrame(2);
+                this.arrayColorTrack[0].setFrame(0);
+                for (let i=1; i<5; ++i) {
+                    this.arrayColorTrack[i].setFrame(1);
                 }
 				//status track
 				/*
@@ -122,35 +127,65 @@ class MainScreen extends Phaser.Scene {
 				nếu là true thì đường ray hiện tại cần được thêm toa tàu 
 				false thì ngược lại
                 */
-                for (let i=0; i<5; ++i) {
+                this.arrayColorTrack[0].status = true;
+                for (let i=1; i<5; ++i) {
                     this.arrayColorTrack[i].status = false;
                 }
-	
-				// // number of train body
-				// this.number1 = Phaser.Math.Between(1, 4); // số ngẫu nhiên trong khoảng từ 1 đến 4
-				// this.number2 = Phaser.Math.Between(5, 8); // số ngẫu nhiên trong khoảng từ 5 đến 8
-				// this.number3 = Phaser.Math.Between(9, 12); // số ngẫu nhiên trong khoảng từ 9 đến 12
-				// this.number4 = Phaser.Math.Between(13, 16); // số ngẫu nhiên trong khoảng từ 13 đến 16
-				// this.number5 = Phaser.Math.Between(17, 20); // số ngẫu nhiên trong khoảng từ 17 đến 20
 
-				// // train body
-				// /*
-				// phan hard code bên dưới là khoảng vị trí ngẫu nhiên mà các toa tàu sẽ xuất hiện
-				// */
-				// this.trainBody5 = this.add.image(Phaser.Math.Between(414, 626), Phaser.Math.Between(200, 220), "body-train" + this.number5).setInteractive({cursor:'pointer'});
-				// this.trainBody4 = this.add.image(Phaser.Math.Between(626, 838), Phaser.Math.Between(400, DEFAULT_HEIGHT/2+30), "body-train" + this.number4).setInteractive({cursor:'pointer'});
-				// this.trainBody3 = this.add.image(Phaser.Math.Between(838, 1050), Phaser.Math.Between(200, 220), "body-train" + this.number3).setInteractive({cursor:'pointer'});
-				// this.trainBody2 = this.add.image(Phaser.Math.Between(1050, 1262), Phaser.Math.Between(400, DEFAULT_HEIGHT/2+30), "body-train" + this.number2).setInteractive({cursor:'pointer'});
-				// this.trainBody1 = this.add.image(Phaser.Math.Between(202, 414), Phaser.Math.Between(400, DEFAULT_HEIGHT/2+30), "body-train" + this.number1).setInteractive({cursor:'pointer'});
-				// this.trainBody1.setScale(0.8);
-				// this.trainBody2.setScale(0.8);
-				// this.trainBody3.setScale(0.8);
-				// this.trainBody4.setScale(0.8);
-				// this.trainBody5.setScale(0.8);
+				// train body
+				/*
+				phan hard code bên dưới là khoảng vị trí ngẫu nhiên mà các toa tàu sẽ xuất hiện
+                */
+               
+                var arrayBody = new Array('body');
+                for (let i=0; i<5; ++i) {
+                    arrayBody[i] = this.add.image(40, 82, 'body');
+                }
+
+                // elip of train body
+                // var posXElip = 0;
+                // var posYElip = 0;
+                var arrayElip = new Array('elip');
+                for (let i=0; i<5; ++i) {
+                    arrayElip[i] = this.add.image(40, 22, 'elip');
+                }
+            
+                // number of train body
+                // var posXNumber = 200;
+                // var posYNumber = 100;
+                var arrayNumber = [];
+                for (let i=0; i<5; ++i) {
+                    arrayNumber[i] = this.add.text(0, 0, Phaser.Math.Between(100, 200), {
+                        color: '#000000',
+                        fontSize: '45px',
+                        fontFamily: 'PT Sans'
+                    })
+                }
+
+                // container
+                var posXContainer = 150;
+                var posYContainer = 100;
+                var container = new Array();
+                for (let i=0; i<5; ++i) {
+                    container[i] = this.add.container(posXContainer += 180, posYContainer += 50, [arrayBody[i], arrayElip[i], arrayNumber[i]] );
+                    container[i].setInteractive(new Phaser.Geom.Circle(50, 50, 60), Phaser.Geom.Circle.Contains);
+                    container[i].setInteractive({cursor: 'pointer'});
+                    this.input.setDraggable(container[i]);
+                }
+                // this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+                //     gameObject.x = dragX;
+                //     gameObject.y = dragY;
+                // });
 
 				//train head
 				this.head = this.add.image(this.cameras.main.centerX-313, this.cameras.main.centerY+83, 'head');
-				
+                this.circle = this.add.image(this.cameras.main.centerX-295, this.cameras.main.centerY+20, 'circle');
+                this.headNumber = this.add.text(this.cameras.main.centerX-305, this.cameras.main.centerY-2, '0', {
+                    color: '#000000',
+                    fontSize: '45px',
+                    fontFamily: 'PT Sans'
+                });
+                
 				//background bonus
 				//this.backgroundBonus = this.add.image(0, 360, "backgroundBonus").setOrigin(0, 0).setScale(0.78);
 
@@ -162,10 +197,56 @@ class MainScreen extends Phaser.Scene {
     }
 
     startDrag(pointer, targets) {
+		this.input.off('pointerdown', this.startDrag, this);
+		this.dragObject = targets[0];
+		this.input.on('pointermove', this.doDrag, this);
+		this.input.on('pointerup', this.stopDrag, this);
+	}
 
-    }
+	doDrag(pointer) {
+		if (this.dragObject != null) {
+			this.dragObject.x = pointer.x;
+			this.dragObject.y = pointer.y;
+		}
+		//this.changeColor();
+	}
+
+	stopDrag() {
+		this.input.on('pointerdown', this.startDrag, this);
+		this.input.off('pointermove', this.doDrag, this);
+		this.input.off('pointerup', this.stopDrag, this);
+
+		//this.checkResult();
+	}
 
     update() {
 
+    }
+}
+
+class DraggableContainer extends Phaser.GameObjects.Container {  
+    constructor(scene, x, y, width, height, children){
+      super(scene, x, y, children)
+      this.x = x;
+      this.y = y;
+      this.width = width;
+      this.height = height;
+  
+      scene.add.existing(this)
+      this.setSize(width, height, false)
+      this.setInteractive()
+        .on('drag', (p, x, y) => {
+          this.setX(p.x - this._dragX + width / 2)
+          this.setY(p.y - this._dragY + height / 2)
+        })
+        .on('pointerdown', (p, x, y) => {
+          this._dragX = x
+          this._dragY = y
+        })
+      
+      this.input.hitArea.x += width/2;
+      this.input.hitArea.y += height/2;
+  
+      scene.input.setDraggable(this, true)
     }
 }
