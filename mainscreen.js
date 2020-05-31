@@ -78,7 +78,7 @@ class MainScreen extends Phaser.Scene {
         this.language.on('pointerout', () => { this.language.setColor(color2); }).setInteractive({cursor: 'pointer'});
 
         //track
-        this.track1 = this.add.image(this.cameras.main.centerX-180, this.cameras.main.centerY+120, 'track').setInteractive();
+        this.track1 = this.add.image(this.cameras.main.centerX-180, this.cameras.main.centerY+120, 'track');
         this.track2 = this.add.image(this.cameras.main.centerX+183, this.cameras.main.centerY+120, 'track');
 
         // color track
@@ -185,7 +185,7 @@ class MainScreen extends Phaser.Scene {
                     fontSize: '45px',
                     fontFamily: 'PT Sans'
                 });
-                
+
 				//background bonus
 				//this.backgroundBonus = this.add.image(0, 360, "backgroundBonus").setOrigin(0, 0).setScale(0.78);
 
@@ -205,10 +205,10 @@ class MainScreen extends Phaser.Scene {
 
 	doDrag(pointer) {
 		if (this.dragObject != null) {
-			this.dragObject.x = pointer.x;
-			this.dragObject.y = pointer.y;
+			this.dragObject.x = pointer.x-50;
+			this.dragObject.y = pointer.y-50;
 		}
-		//this.changeColor();
+		this.changeColor();
 	}
 
 	stopDrag() {
@@ -219,34 +219,71 @@ class MainScreen extends Phaser.Scene {
 		//this.checkResult();
 	}
 
+    changeColor() {
+		if (this.dragObject != null) {
+            for (let i=0; i<5; ++i) {
+                if (this.arrayColorTrack[i].status == true) {
+                    if (this.dragObject.x >= 435+150*i && this.dragObject.x <= 570+150*i && this.dragObject.y > 350 && this.dragObject.y < 520) {
+                        console.log('hello');
+                        this.arrayColorTrack[i].setFrame(1);
+                    } 
+                    else {
+                        this.arrayColorTrack[i].setFrame(0);    
+                    }
+                }
+            }
+			// // position 1
+			// if (this.track2.status == true) {
+			// 	if (this.dragObject.x > 350 && this.dragObject.x <= 550 && this.dragObject.y > DEFAULT_HEIGHT/2+50 && this.dragObject.y < DEFAULT_HEIGHT/4*3) {
+			// 		this.track2.setFrame(2);
+			// 	} 
+			// 	else {
+			// 		this.track2.setFrame(0);
+			// 	}
+			// }
+			// // position 2
+			// if (this.track3.status == true) {
+			// 	if (this.dragObject.x > 550 && this.dragObject.x <= 725 && this.dragObject.y > DEFAULT_HEIGHT/2+50 && this.dragObject.y < DEFAULT_HEIGHT/4*3) {
+			// 		this.track3.setFrame(2);
+			// 	}
+			// 	else {
+			// 		this.track3.setFrame(0);
+			// 	}				
+			// }
+			// // position 3
+			// if (this.track4.status == true) {
+			// 	if (this.dragObject.x > 725 && this.dragObject.x <= 940 && this.dragObject.y > DEFAULT_HEIGHT/2+50 && this.dragObject.y < DEFAULT_HEIGHT/4*3) {
+			// 		this.track4.setFrame(2);
+			// 	}
+			// 	else {
+			// 		this.track4.setFrame(0);
+			// 	}	
+			// }
+			// // position 4
+			// if (this.track5.status == true) {
+			// 	if (this.dragObject.x > 940 && this.dragObject.x <= 1120 && this.dragObject.y > DEFAULT_HEIGHT/2+50 && this.dragObject.y < DEFAULT_HEIGHT/4*3) {
+			// 		this.track5.setFrame(2);
+			// 	}
+			// 	else{
+			// 		this.track5.setFrame(0);
+			// 	}	
+			// }
+			// // position 5
+			// if (this.track6.status == true) {
+			// 	if (this.dragObject.x > 1120 && this.dragObject.x <= 1320 && this.dragObject.y > DEFAULT_HEIGHT/2+50 && this.dragObject.y < DEFAULT_HEIGHT/4*3) {
+			// 		this.track6.setFrame(2);
+			// 	}
+			// 	else {
+			// 		this.track6.setFrame(0);
+			// 	}
+			// }
+			
+		}
+	}
+
+    
+
     update() {
 
-    }
-}
-
-class DraggableContainer extends Phaser.GameObjects.Container {  
-    constructor(scene, x, y, width, height, children){
-      super(scene, x, y, children)
-      this.x = x;
-      this.y = y;
-      this.width = width;
-      this.height = height;
-  
-      scene.add.existing(this)
-      this.setSize(width, height, false)
-      this.setInteractive()
-        .on('drag', (p, x, y) => {
-          this.setX(p.x - this._dragX + width / 2)
-          this.setY(p.y - this._dragY + height / 2)
-        })
-        .on('pointerdown', (p, x, y) => {
-          this._dragX = x
-          this._dragY = y
-        })
-      
-      this.input.hitArea.x += width/2;
-      this.input.hitArea.y += height/2;
-  
-      scene.input.setDraggable(this, true)
     }
 }
