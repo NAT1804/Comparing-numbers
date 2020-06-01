@@ -10,6 +10,11 @@ var sceneConfig = {
     }
 };
 
+var arrayBody;
+var arrayElip;
+var arrayNumber;
+var arrContainer;
+
 class MainScreen extends Phaser.Scene {
     constructor() {
         super(sceneConfig);
@@ -136,26 +141,21 @@ class MainScreen extends Phaser.Scene {
 				/*
 				phan hard code bên dưới là khoảng vị trí ngẫu nhiên mà các toa tàu sẽ xuất hiện
                 */
-               
-                var arrayBody = new Array('body');
+                arrayBody = new Array('body');
                 for (let i=0; i<5; ++i) {
                     arrayBody[i] = this.add.image(40, 82, 'body');
                 }
 
                 // elip of train body
-                // var posXElip = 0;
-                // var posYElip = 0;
-                var arrayElip = new Array('elip');
+                arrayElip = new Array('elip');
                 for (let i=0; i<5; ++i) {
                     arrayElip[i] = this.add.image(40, 22, 'elip');
                 }
             
                 // number of train body
-                // var posXNumber = 200;
-                // var posYNumber = 100;
-                var arrayNumber = [];
+                arrayNumber = [];
                 for (let i=0; i<5; ++i) {
-                    arrayNumber[i] = this.add.text(0, 0, Phaser.Math.Between(100, 200), {
+                    arrayNumber[i] = this.add.text(0, 0, Phaser.Math.Between(100+100*i, 200+100*i), {
                         color: '#000000',
                         fontSize: '45px',
                         fontFamily: 'PT Sans'
@@ -165,12 +165,12 @@ class MainScreen extends Phaser.Scene {
                 // container
                 var posXContainer = 150;
                 var posYContainer = 100;
-                var container = new Array();
-                for (let i=0; i<5; ++i) {
-                    container[i] = this.add.container(posXContainer += 180, posYContainer += 50, [arrayBody[i], arrayElip[i], arrayNumber[i]] );
-                    container[i].setInteractive(new Phaser.Geom.Circle(50, 50, 60), Phaser.Geom.Circle.Contains);
-                    container[i].setInteractive({cursor: 'pointer'});
-                    this.input.setDraggable(container[i]);
+                arrContainer = new Array();
+                for (let i=4; i>=0; --i) {
+                    arrContainer[i] = this.add.container(posXContainer += 180, posYContainer += 50, [arrayBody[i], arrayElip[i], arrayNumber[i]] );
+                    arrContainer[i].setInteractive(new Phaser.Geom.Circle(50, 50, 60), Phaser.Geom.Circle.Contains);
+                    arrContainer[i].setInteractive({cursor: 'pointer'});
+                    this.input.setDraggable(arrContainer[i]);
                 }
                 // this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
                 //     gameObject.x = dragX;
@@ -216,14 +216,14 @@ class MainScreen extends Phaser.Scene {
 		this.input.off('pointermove', this.doDrag, this);
 		this.input.off('pointerup', this.stopDrag, this);
 
-		//this.checkResult();
+		this.checkResult();
 	}
 
     changeColor() {
 		if (this.dragObject != null) {
             for (let i=0; i<5; ++i) {
                 if (this.arrayColorTrack[i].status == true) {
-                    if (this.dragObject.x >= 435+150*i && this.dragObject.x <= 570+150*i && this.dragObject.y > 350 && this.dragObject.y < 520) {
+                    if (this.dragObject.x >= 435+135*i && this.dragObject.x <= 570+135*i && this.dragObject.y > 350 && this.dragObject.y < 520) {
                         console.log('hello');
                         this.arrayColorTrack[i].setFrame(1);
                     } 
@@ -232,56 +232,161 @@ class MainScreen extends Phaser.Scene {
                     }
                 }
             }
-			// // position 1
-			// if (this.track2.status == true) {
-			// 	if (this.dragObject.x > 350 && this.dragObject.x <= 550 && this.dragObject.y > DEFAULT_HEIGHT/2+50 && this.dragObject.y < DEFAULT_HEIGHT/4*3) {
-			// 		this.track2.setFrame(2);
-			// 	} 
-			// 	else {
-			// 		this.track2.setFrame(0);
-			// 	}
-			// }
-			// // position 2
-			// if (this.track3.status == true) {
-			// 	if (this.dragObject.x > 550 && this.dragObject.x <= 725 && this.dragObject.y > DEFAULT_HEIGHT/2+50 && this.dragObject.y < DEFAULT_HEIGHT/4*3) {
-			// 		this.track3.setFrame(2);
-			// 	}
-			// 	else {
-			// 		this.track3.setFrame(0);
-			// 	}				
-			// }
-			// // position 3
-			// if (this.track4.status == true) {
-			// 	if (this.dragObject.x > 725 && this.dragObject.x <= 940 && this.dragObject.y > DEFAULT_HEIGHT/2+50 && this.dragObject.y < DEFAULT_HEIGHT/4*3) {
-			// 		this.track4.setFrame(2);
-			// 	}
-			// 	else {
-			// 		this.track4.setFrame(0);
-			// 	}	
-			// }
-			// // position 4
-			// if (this.track5.status == true) {
-			// 	if (this.dragObject.x > 940 && this.dragObject.x <= 1120 && this.dragObject.y > DEFAULT_HEIGHT/2+50 && this.dragObject.y < DEFAULT_HEIGHT/4*3) {
-			// 		this.track5.setFrame(2);
-			// 	}
-			// 	else{
-			// 		this.track5.setFrame(0);
-			// 	}	
-			// }
-			// // position 5
-			// if (this.track6.status == true) {
-			// 	if (this.dragObject.x > 1120 && this.dragObject.x <= 1320 && this.dragObject.y > DEFAULT_HEIGHT/2+50 && this.dragObject.y < DEFAULT_HEIGHT/4*3) {
-			// 		this.track6.setFrame(2);
-			// 	}
-			// 	else {
-			// 		this.track6.setFrame(0);
-			// 	}
-			// }
-			
 		}
 	}
 
-    
+    checkResult() {
+		if (this.dragObject != null) {
+            for (let i=0; i<5; ++i) {
+                
+                if (this.dragObject.x >= 435+135*i && this.dragObject.x <= 570+135*i && this.dragObject.y > 350 && this.dragObject.y < 520) {
+                    if (i != 5) {
+                        this.checkTurn(i+1, arrContainer[i], this.arrayColorTrack[i], this.arrayColorTrack[i+1]);
+                    }
+                    else {
+                        if (this.dragObject == arrContainer[i]) {
+                            if (this.count > 0) this.count --;
+                            this.checkFalse = true;
+                            this.track6.setFrame(0);
+                            this.trainBody5.x = 1210; // 1210 va 495 là vị trí của toa tàu cuối cùng được vào đường ray
+                            this.trainBody5.y = 495;
+                            this.trainBody5.disableInteractive();
+                            this.track6.status = false;
+                            this.explosion = this.add.sprite(140, DEFAULT_HEIGHT*3/4-150,"explosion").setScale(2.5);
+                            this.explosion.play('explode');
+                            this.time.addEvent({
+                                delay: 1000,
+                                callback: () => {
+                                    this.track3.setFrame(4);
+                                    this.track4.setFrame(4);
+                                    this.track5.setFrame(4);
+                                    this.track6.setFrame(4);
+                                    this.track2.setFrame(4);
+                                    if (this.count == 0) {
+                                        if (this.greenBall1.statusRight == true)  {
+                                            this.greenBallMoveRight(this.greenBall1, 1);
+                                            this.greenBall1.statusRight = false;
+                                            this.end = true;
+                                            this.time.addEvent({
+                                                delay: 5000,
+                                                callback: () => {
+                                                    this.speaker.disableInteractive();
+                                                    this.finishScreen = this.add.image(0, 0, "khungfinish");
+                                                    this.finishScreen.setPosition(this.cameras.main.centerX, this.cameras.main.centerY-58);
+                                                    this.finishButton = this.add.sprite(770, 500, "finishbutton").setInteractive({cursor: 'pointer'});
+                                                    this.finishButton.setPosition(this.cameras.main.centerX, this.cameras.main.centerY);
+                                                    this.finishButton.on('pointerover', () => this.finishButton.setFrame(1));
+                                                    this.finishButton.on('pointerout', () => this.finishButton.setFrame(0));
+                                                    this.finishButton.on('pointerdown', () => this.scene.start("screenMain"));
+                                                }
+                                            });
+                                            
+                                        }	
+                                        // if (this.greenBall2.statusRight == true)  {
+                                        //     this.greenBallMoveRight(this.greenBall2, 2);
+                                        //     this.greenBall1.statusRight = true;
+                                        //     this.greenBall1.statusLeft = false;
+                                        //     this.greenBall2.statusRight = false;
+                                        //     this.greenBall2.statusLeft = true;
+                                        //     this.greenBall3.statusLeft = false;
+                                        // }	
+                                        // if (this.greenBall3.statusRight == true)  {
+                                        //     this.greenBallMoveRight(this.greenBall3, 3);
+                                        //     this.greenBall2.statusRight = true;
+                                        //     this.greenBall2.statusLeft = false;
+                                        //     this.greenBall3.statusRight = false;
+                                        //     this.greenBall3.statusLeft = true;
+                                        //     this.greenBall4.statusLeft = false;			
+                                        // }
+                                        // if (this.greenBall4.statusRight == true)  {
+                                        //     this.greenBallMoveRight(this.greenBall4, 4);
+                                        //     this.greenBall3.statusRight = true;
+                                        //     this.greenBall3.statusLeft = false;
+                                        //     this.greenBall4.statusRight = false;
+                                        //     this.greenBall4.statusLeft = true;
+                                            
+                                        // }
+
+                                    }
+                                    this.trainMove();
+                                    
+                                },
+                                loop: false
+                            });	
+                        }
+                    }
+                }
+            }
+
+		}
+	}
+
+    checkTurn(numberOfTurn, container, colorTrack, colorTrack2, /*greenBall4, greenBall3, greenBall2, greenBall1*/) {
+		if (this.dragObject == container) {
+			colorTrack.setFrame(0);
+			container.x = 503 + 125*(numberOfTurn-1); // vị trí của toa tàu được đạt vào đường ray khi chọn đúng toa tàu
+			container.y = 390;
+			container.disableInteractive();
+			colorTrack2.setFrame(0);
+			colorTrack.status = false;
+			colorTrack2.status = true;
+		} else {
+			// this.imageWrong = this.add.image(430 + 195*(numberOfTurn-1), 700, "imagewrong"); // vị trí của thông báo khi đặt sai vị trí toa tàu
+			// this.speaker = this.add.image(200 + 195*(numberOfTurn-1), 665, "loa").setScale(0.2); // vị trí của loa xuất hiện khi đấti vị trí toa tàu
+			// this.speaker.setOrigin(0, 0);
+			// this.speaker.setInteractive({cursor: 'pointer'});
+			// this.soundWrong = this.sound.add('sound4');
+			// this.speaker.on('pointerdown', () => {
+			// 	this.soundWrong.play();
+			// 	this.speaker.destroy();
+			// 	this.imageWrong.destroy();
+			// });
+			if (this.count == 0) this.count+=2;
+			// if (this.checkFalse == true) {
+			// 	if (greenBall4.statusLeft == true) {
+			// 		this.greenBallMoveLeft(greenBall4, 4);
+			// 		greenBall4.statusLeft = false;
+			// 		greenBall4.statusRight = true;
+			// 		greenBall3.statusRight = false;
+			// 	}
+			// 	if (greenBall3.statusLeft == true) {
+			// 		this.greenBallMoveLeft(greenBall3, 3);
+			// 		greenBall3.statusLeft = false;
+			// 		greenBall3.statusRight = true;
+			// 		greenBall2.statusRight = false;
+			// 	}
+			// 	if (greenBall2.statusLeft == true) {
+			// 		this.greenBallMoveLeft(greenBall2, 2);
+			// 		greenBall2.statusLeft = false;
+			// 		greenBall2.statusRight = true;
+			// 		greenBall1.statusRight = false;
+			// 	}
+			// 	if (greenBall1.statusLeft == true) {
+			// 		this.greenBallMoveLeft(greenBall1, 1);
+			// 		greenBall1.statusLeft = false;
+			// 		greenBall1.statusRight = true;
+			// 	}
+			// 	this.checkFalse = false;
+			// }
+			colorTrack.setFrame(2);
+			this.dragObject.x = 503 + 125*(numberOfTurn-1);
+			this.dragObject.y = 390;
+
+			var objectTurnBack = this.time.addEvent({
+				delay: 1000,
+				callback: () => {
+                    this.dragObject.y -= 150; // toa tàu bị sai vị trí được dịch chuyển lên trên
+                    colorTrack.setFrame(0);
+				},
+				loop: false
+			});
+
+		}
+	}
+
+    trainMove() {
+        
+    }
 
     update() {
 
