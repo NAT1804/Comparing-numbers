@@ -60,7 +60,24 @@ class MainScreen extends Phaser.Scene {
     }
 
     create() {
-        
+        // background
+        var grad = this.add.image(0, 0, 'grad').setOrigin(0, 0).setScale(3.0);
+        for (let i=0; i<2; ++i) {
+            for (let j=0; j<2; ++j) {
+                var color = this.add.image(0+1000*j, 0+1000*i, 'color').setOrigin(0, 0);
+            }
+        }
+        for (let i=0; i<30; ++i) {
+            for (let j=0; j<16; ++j) {
+                var cell = this.add.image(50*j, 50*i, 'cell').setOrigin(0, 0);
+            }
+        }
+
+        for (let i=0; i<8; ++i) {
+            for (let j=0; j<8; ++j) {
+                var stuff = this.add.image(250*j, 150*i, 'stuff').setOrigin(0, 0);
+            }
+        }
 
         // box 
         this.box = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY-75, 'mainBox');
@@ -80,7 +97,7 @@ class MainScreen extends Phaser.Scene {
         this.bar = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY-356, 'bar');
 
         // green ball
-        var posXGreenBall1 = 479;
+        var posXGreenBall1 = 468;
         var posYGreenBall = 21;
         this.arrayGreenBall = new Array('greenBall');
         for (let i=0; i<3; ++i) {
@@ -285,7 +302,7 @@ class MainScreen extends Phaser.Scene {
                         
                         arrContainer[i].disableInteractive();
                         this.arrayColorTrack[i].status = false;
-                        this.explosion = this.add.sprite(368, config.height*3/4-175,"explosion").setScale(2.0);
+                        this.explosion = this.add.sprite(362, 400,"explosion").setScale(2.0);
                         this.explosion.play('explode');
                         this.time.addEvent({
                             delay: 1000,
@@ -305,13 +322,7 @@ class MainScreen extends Phaser.Scene {
                                                 this.time.addEvent({
                                                     delay: 5000,
                                                     callback: () => {
-                                                        this.finishScreen = this.add.image(0, 0, "khungfinish");
-                                                        this.finishScreen.setPosition(this.cameras.main.centerX, this.cameras.main.centerY-58);
-                                                        this.finishButton = this.add.sprite(770, 500, "finishbutton").setInteractive({cursor: 'pointer'});
-                                                        this.finishButton.setPosition(this.cameras.main.centerX, this.cameras.main.centerY);
-                                                        this.finishButton.on('pointerover', () => this.finishButton.setFrame(1));
-                                                        this.finishButton.on('pointerout', () => this.finishButton.setFrame(0));
-                                                        this.finishButton.on('pointerdown', () => this.scene.start("screenMain"));
+                                                        this.scene.start('mainScreen');
                                                     }
                                                 });
                                             } else if (i == 2) {
@@ -416,13 +427,13 @@ class MainScreen extends Phaser.Scene {
 			delay: 0,
 			callback: () => { 
 				if (i == 2) {
-					if (ball.x > 918) run.remove(); // giới hạn dừng lại của quả bóng xanh
+					if (ball.x > 909) run.remove(); // giới hạn dừng lại của quả bóng xanh
 				}
 				else if (i == 1) {
-					if (ball.x > 895) run.remove(); // giới hạn dừng lại của quả bóng xanh
+					if (ball.x > 886) run.remove(); // giới hạn dừng lại của quả bóng xanh
 				}
 				else if (i == 0) {
-					if (ball.x > 872) run.remove(); // giới hạn dừng lại của quả bóng xanh
+					if (ball.x > 863) run.remove(); // giới hạn dừng lại của quả bóng xanh
 				}
 				ball.x += 10;
 			},
@@ -435,10 +446,10 @@ class MainScreen extends Phaser.Scene {
 			delay: 0,
 			callback: () => {
 				if (i == 2) {
-					if (ball.x < 560) run.remove(); // giới hạn dừng lại của quả bóng xanh
+					if (ball.x < 514) run.remove(); // giới hạn dừng lại của quả bóng xanh
 				}
 				else if (i == 1) {
-					if (ball.x < 537) run.remove(); // giới hạn dừng lại của quả bóng xanh
+					if (ball.x < 491) run.remove(); // giới hạn dừng lại của quả bóng xanh
 				}
 				
 				ball.x -= 10;
