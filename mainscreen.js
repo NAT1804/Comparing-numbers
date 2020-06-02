@@ -57,6 +57,10 @@ class MainScreen extends Phaser.Scene {
         this.load.image('color', 'assets/images/background3.png');
         this.load.image('grad', 'assets/images/background1.jpg');
         this.load.image('stuff', 'assets/images/background2.png');
+        this.load.spritesheet('start', 'assets/images/buttonStart.png', {
+            frameWidth: 112,
+            frameHeight: 113
+        });
     }
 
     create() {
@@ -83,7 +87,7 @@ class MainScreen extends Phaser.Scene {
         this.box = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY-75, 'mainBox');
 
         // back button
-        this.backButton = this.add.text(277, 23, 'Back', {
+        this.backButton = this.add.text(277, 23, '< Back', {
             fontFamily: 'Noto Sans',
             color: '#5280b7',
             fontSize: '18px'
@@ -139,7 +143,73 @@ class MainScreen extends Phaser.Scene {
 			frameRate: 5, // 5 frames per second
 			repeat: 0,
 			hideOnComplete: true
+        });
+        
+        //disable interactive object
+		this.time.addEvent({
+			delay: 0,
+			callback: () => {
+				for (let i=0; i<5; ++i) {
+                    arrContainer[i].disableInteractive();
+                }
+			}
 		});
+
+        // start button
+        this.time.addEvent({
+            delay: 0,
+            
+			callback: () => {
+                var graphics = this.add.graphics();
+                //var circle = new Phaser.Geom.Circle(700, 400, 200);
+                graphics.fillStyle(0xfdf8fc, 0.7);
+                graphics.fillCircle(this.cameras.main.centerX, this.cameras.main.centerY-90, 160);
+                graphics.fillStyle(0xf8e5f5, 0.7);
+                graphics.fillCircle(this.cameras.main.centerX, this.cameras.main.centerY-90, 120);
+                // var color = '#fdf8fc'
+                // var circle1 = this.add.circle(this.cameras.main.centerX, this.cameras.main.centerY-90, 150, color);
+                // circle1.tint = 0xfdf8fc;
+                // var circle2 = this.add.circle(this.cameras.main.centerX, this.cameras.main.centerY-90, 130, '#f8e5f5');
+
+                this.startButton = this.add.sprite(this.cameras.main.centerX+20, this.cameras.main.centerY-90, 'start').setInteractive({
+                    cursor: 'pointer',
+                    hitArea: new Phaser.Geom.Circle(0, 0, 160),
+                    hitAreaCallback: Phaser.Geom.Circle.Contains
+                });
+                this.textStart = this.add.text(this.cameras.main.centerX-20, this.cameras.main.centerY-100, 'start', {
+                    fontFamily: 'Noto Sans',
+                    color: '#ffffff',
+                    fontSize: '18px'
+                });
+                
+		
+				this.startButton.on('pointerover', () => {
+                    graphics.clear();
+                    this.startButton.setFrame(1);
+                    graphics.fillStyle(0xfdf8fc, 0.7);
+                    graphics.fillCircle(this.cameras.main.centerX, this.cameras.main.centerY-90, 170);
+                    graphics.fillStyle(0xf8e5f5, 0.7);
+                    graphics.fillCircle(this.cameras.main.centerX, this.cameras.main.centerY-90, 130);
+                });
+				this.startButton.on('pointerout', () => {
+                    graphics.clear();
+                    this.startButton.setFrame(0);
+                    graphics.fillStyle(0xfdf8fc, 0.7);
+                    graphics.fillCircle(this.cameras.main.centerX, this.cameras.main.centerY-90, 160);
+                    graphics.fillStyle(0xf8e5f5, 0.7);
+                    graphics.fillCircle(this.cameras.main.centerX, this.cameras.main.centerY-90, 120);
+                });
+				this.startButton.on('pointerdown', () => {
+                    graphics.clear();
+					this.textStart.destroy();
+					this.startButton.destroy();
+					for (let i=0; i<5; ++i) {
+                        arrContainer[i].setInteractive(new Phaser.Geom.Circle(50, 50, 60), Phaser.Geom.Circle.Contains);
+                    }
+				});
+			}
+		});
+
     }
 
     initial() {
@@ -160,7 +230,7 @@ class MainScreen extends Phaser.Scene {
                 
                 //track
                 this.track1 = this.add.image(this.cameras.main.centerX-180, this.cameras.main.centerY+120, 'track');
-                this.track2 = this.add.image(this.cameras.main.centerX+183, this.cameras.main.centerY+120, 'track');
+                this.track2 = this.add.image(this.cameras.main.centerX+180, this.cameras.main.centerY+120, 'track');
 
                 // color track 
                 var posXColorTrack = 357;
@@ -215,8 +285,7 @@ class MainScreen extends Phaser.Scene {
                 arrContainer = new Array();
                 for (let i=4; i>=0; --i) {
                     arrContainer[i] = this.add.container(posXContainer += 180, posYContainer += 50, [arrayBody[i], arrayElip[i], arrayNumber[i]] );
-                    arrContainer[i].setInteractive(new Phaser.Geom.Circle(50, 50, 60), Phaser.Geom.Circle.Contains);
-                    arrContainer[i].setInteractive({cursor: 'pointer'});
+                    arrContainer[i].setInteractive(new Phaser.Geom.Circle(50, 50, 60), Phaser.Geom.Circle.Contains); 
                     this.input.setDraggable(arrContainer[i]);
                 }
                 // this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
@@ -446,10 +515,10 @@ class MainScreen extends Phaser.Scene {
 			delay: 0,
 			callback: () => {
 				if (i == 2) {
-					if (ball.x < 514) run.remove(); // giới hạn dừng lại của quả bóng xanh
+					if (ball.x < 556) run.remove(); // giới hạn dừng lại của quả bóng xanh
 				}
 				else if (i == 1) {
-					if (ball.x < 491) run.remove(); // giới hạn dừng lại của quả bóng xanh
+					if (ball.x < 533) run.remove(); // giới hạn dừng lại của quả bóng xanh
 				}
 				
 				ball.x -= 10;
