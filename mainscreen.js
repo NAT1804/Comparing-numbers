@@ -91,11 +91,14 @@ class MainScreen extends Phaser.Scene {
             fontFamily: 'Noto Sans',
             color: '#5280b7',
             fontSize: '18px'
-        });
+        }).setInteractive({cursor: 'pointer'});
         var color1 = '#83d5d4';
         var color2 = '#5280b7';
-        this.backButton.on('pointerover', () => { this.backButton.setColor(color1); }).setInteractive({cursor: 'pointer'});
-        this.backButton.on('pointerout', () => { this.backButton.setColor(color2); }).setInteractive({cursor: 'pointer'});
+        this.backButton.on('pointerover', () => { this.backButton.setColor(color1); });
+        this.backButton.on('pointerout', () => { this.backButton.setColor(color2); });
+        this.backButton.on('pointerdown', () => { 
+            this.scene.start('mainScreen');
+        });
 
         // bar
         this.bar = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY-356, 'bar');
@@ -302,9 +305,6 @@ class MainScreen extends Phaser.Scene {
                     fontFamily: 'PT Sans'
                 });
                 containerHead = this.add.container(424, 387, [head, circle, headNumber]);
-                // containerHead.setInteractive(new Phaser.Geom.Circle(50, 50, 60), Phaser.Geom.Circle.Contains);
-                // containerHead.setInteractive({cursor: 'pointer'});
-                // this.input.setDraggable(containerHead);
 
 				//background bonus
 				//this.backgroundBonus = this.add.image(0, 360, "backgroundBonus").setOrigin(0, 0).setScale(0.78);
